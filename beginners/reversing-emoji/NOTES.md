@@ -67,5 +67,15 @@ http://emoji-t0anaxnr3nacpt4na.we
 
 Given the earlier challenge (work computer) which had a website to visit, I completed the domain name to get the url http://emoji-t0anaxnr3nacpt4na.web.ctfcompetition.com/. Visiting that URL however, didn't lead me to anything useful.
 
+One thing I didn't mention earlier, is that I had examined the resulting code after transforming it from the emoji version. I got a sense of what each block was doing -- specifically, it was loading a sequence of integers onto the stack and then cycling through them, doing an xor operation and printing out the result.
+
+The interesting thing, after examining the xor operations, was the value being xor'd with the number on the stack. It was not the same value each time, like a very simple key, nor was it repeating.
+
+Instead, it appeared to be following a specific pattern: 3, 5, 7, 11, 101, 131, 151, 181, ... Luckily there's a website which can help identify specific sequences of integers, [the on-line encyclopedia of integer sequences](https://oeis.org/). Putting just the first six values into there, it found the sequence right away -- the palindromic primes.
+
+This probably explained why the program is taking so long, rather than have this sequence encoded into the data it was likely calculating primes at run-time and checking them for palindrome...ism? palindromity? Whatever.
+
+Thankfully I can speed the process along because I can get a long list of them online and run through the xor process much quicker.
+
 ### Side note
 The flavor text here indicates to me that maybe the way to access the Admin panel for the gov-xss challenge is to find a persisted HTTP cookie within the NTFS archive from the family-computer challenge.
