@@ -16,7 +16,7 @@ class VM:
 
     fn = VM.OPERATIONS.get(cur_ins, None)
 
-    if cur_ins[0] == '🖋':
+    if cur_ins[0] == ':':
       return
     if fn is None:
       raise RuntimeError("Unknown instruction '{}' at {}".format(
@@ -34,8 +34,8 @@ class VM:
 
   def if_zero(self):
     if self.stack[-1] == 0:
-      while self.rom[self.instruction_pointer] != '😐':
-        if self.rom[self.instruction_pointer] in ['🏀', '⛰']:
+      while self.rom[self.instruction_pointer] != '&':
+        if self.rom[self.instruction_pointer] in ['j', '@']:
           break
         self.step()
     else:
@@ -44,8 +44,8 @@ class VM:
 
   def if_not_zero(self):
     if self.stack[-1] != 0:
-      while self.rom[self.instruction_pointer] != '😐':
-        if self.rom[self.instruction_pointer] in ['🏀', '⛰']:
+      while self.rom[self.instruction_pointer] != '&':
+        if self.rom[self.instruction_pointer] in ['j', '@']:
           break
         self.step()
     else:
@@ -53,15 +53,15 @@ class VM:
       self.instruction_pointer += 1
 
   def find_first_endif(self):
-    while self.rom[self.instruction_pointer] != '😐':
+    while self.rom[self.instruction_pointer] != '&':
       self.instruction_pointer += 1
 
   def jump_to(self):
     marker = self.rom[self.instruction_pointer]
-    if marker[0] != '💰':
+    if marker[0] != '=':
       print('Incorrect symbol : ' + marker[0])
       raise SystemExit()
-    marker = '🖋' + marker[1:]
+    marker = ':' + marker[1:]
     self.instruction_pointer = self.rom.index(marker) + 1
 
   def jump_top(self):
@@ -76,9 +76,9 @@ class VM:
     sys.stdout.flush()
 
   def push(self):
-    if self.rom[self.instruction_pointer] == '🥇':
+    if self.rom[self.instruction_pointer] == '[':
       self.stack.append(self.accumulator1)
-    elif self.rom[self.instruction_pointer] == '🥈':
+    elif self.rom[self.instruction_pointer] == ']':
       self.stack.append(self.accumulator2)
     else:
       raise RuntimeError('Unknown instruction {} at position {}'.format(
@@ -86,9 +86,9 @@ class VM:
     self.instruction_pointer += 1
 
   def pop(self):
-    if self.rom[self.instruction_pointer] == '🥇':
+    if self.rom[self.instruction_pointer] == '[':
       self.accumulator1 = self.stack.pop()
-    elif self.rom[self.instruction_pointer] == '🥈':
+    elif self.rom[self.instruction_pointer] == ']':
       self.accumulator2 = self.stack.pop()
     else:
       raise RuntimeError('Unknown instruction {} at position {}'.format(
@@ -101,16 +101,16 @@ class VM:
   def load(self):
     num = 0
 
-    if self.rom[self.instruction_pointer] == '🥇':
+    if self.rom[self.instruction_pointer] == '[':
       acc = 1
-    elif self.rom[self.instruction_pointer] == '🥈':
+    elif self.rom[self.instruction_pointer] == ']':
       acc = 2
     else:
       raise RuntimeError('Unknown instruction {} at position {}'.format(
           self.rom[self.instruction_pointer], str(self.instruction_pointer)))
     self.instruction_pointer += 1
 
-    while self.rom[self.instruction_pointer] != '✋':
+    while self.rom[self.instruction_pointer] != '#':
       num = num * 10 + (ord(self.rom[self.instruction_pointer][0]) - ord('0'))
       self.instruction_pointer += 1
 
@@ -145,23 +145,23 @@ class VM:
     self.stack.append(b ^ a)
 
   OPERATIONS = {
-      '🍡': add,
-      '🤡': clone,
-      '📐': divide,
-      '😲': if_zero,
-      '😄': if_not_zero,
-      '🏀': jump_to,
-      '🚛': load,
-      '📬': modulo,
-      '⭐': multiply,
-      '🍿': pop,
-      '📤': pop_out,
-      '🎤': print_top,
-      '📥': push,
-      '🔪': sub,
-      '🌓': xor,
-      '⛰': jump_top,
-      '⌛': exit
+      '+': add,
+      'c': clone,
+      '/': divide,
+      '?': if_zero,
+      '!': if_not_zero,
+      'j': jump_to,
+      'l': load,
+      '%': modulo,
+      '*': multiply,
+      '>': pop,
+      'o': pop_out,
+      'p': print_top,
+      '<': push,
+      '-': sub,
+      '^': xor,
+      '@': jump_top,
+      '$': exit
   }
 
 
