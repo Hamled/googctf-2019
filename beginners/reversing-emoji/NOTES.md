@@ -60,5 +60,12 @@ Okay, the use of emojis is rather taxing on my mental energy, and various parts 
 
 That took a lot longer than I hoped, but the code is definitely easier to look at and work with now.
 
+Took a break to get some lunch, but I decided to leave the program running, since it might have outputted more useful stuff (I also instrumented it a bit to display the XOR operations and their results). This is how far it got by the time I got back:
+```
+http://emoji-t0anaxnr3nacpt4na.we
+```
+
+Given the earlier challenge (work computer) which had a website to visit, I completed the domain name to get the url http://emoji-t0anaxnr3nacpt4na.web.ctfcompetition.com/. Visiting that URL however, didn't lead me to anything useful.
+
 ### Side note
 The flavor text here indicates to me that maybe the way to access the Admin panel for the gov-xss challenge is to find a persisted HTTP cookie within the NTFS archive from the family-computer challenge.
