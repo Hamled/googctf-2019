@@ -77,5 +77,43 @@ This probably explained why the program is taking so long, rather than have this
 
 Thankfully I can speed the process along because I can get a long list of them online and run through the xor process much quicker.
 
+I put all of the primes I found online (118) into a text file, and each value from the "ciphertext" into another text file. I wrote a simple Python script to read them in and xor each of them together, but quickly ran into some trouble.
+
+```python
+def decipher(primes, ciphertext, debug=True):
+  plaintext = ''
+  for i in range(0, min(len(ciphertext), len(primes))):
+    p, t = primes[i], ciphertext[i]
+    x = p ^ t
+    c = ''
+    try:
+      c = chr(x)
+    except ValueError:
+      pass
+    plaintext += c
+    
+    if debug:
+      print("%d ^ %d = %d (%s)" % (p, t, x, c))
+  
+  print(plaintext)
+```
+
+It appears there's as a jump between each of the the three sections, where a certain number of primes is skipped. My guess is that's what the final number in each block of integers loaded onto the stack is for. At least for the second block I can identify the first prime it uses, because I can reliably guess what the next character should be (the string so far ends with "web.ctfco" so I know it should be followed by m). This allows me to remove the unused prime entries from my text file and continue on... until I hit the next gap.
+
+Okay, that was only enough to get the original URL from before. The remainder of any path component (assuming there is one, and it's not just a red-herring) is in the last block, which has significantly larger (two factors) values. This means I'll need to find even more primes, since my list of primes is running out. I also need to write some code that tries a bunch of primes until it finds one which xor's with 9,916,239 to create a valid character.
+
+I found [a page with seven digit primes]() (so far all of the largish primes have been the same number of digits as the value they're xor'd with so this is a good place to start). The page also includes a program to find those primes, so if this list doesn't include the ones I need I can run that program to generate more (hopefully it doesn't take too long...)
+
+Okay that worked well, but I still don't have enough primes. I have enough to probably guess the remainder of the URL (right now I have "http://emoji-t0anaxnr3nacpt4na.web.ctfcompetition.com/humans_and_caulif" which probably ends with "lower", but just in case I should finish the primes list.)
+
+This list now is 9 digit primes, and I was able to find a page from the same website (perhaps they're automatically generated) with the list of those. Judging by the values in the program, and how up until now all of the primes have been numerically very similar (I suppose they must be to zero out any high bits leaving a number < 256), I should only need to test the list of primes between 100,000,000 and 110,000,000.
+
+Turns out it was the first 15 9-digit primes, and adding those to the list and re-running my decipher function resulted in the following URL: http://emoji-t0anaxnr3nacpt4na.web.ctfcompetition.com/humans_and_cauliflowers_network/
+
+Browsing around on that site, I found the flag in an image file:
+```
+CTF{Peace_from_Cauli!}
+```
+
 ### Side note
 The flavor text here indicates to me that maybe the way to access the Admin panel for the gov-xss challenge is to find a persisted HTTP cookie within the NTFS archive from the family-computer challenge.
