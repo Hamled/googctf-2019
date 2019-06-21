@@ -3,3 +3,4 @@ These are my files for the beginners challenges. The `NOTES.md` files include so
 
 ## Challenges
 * [rand2](./reversing-rand2/README.md)
+* [satellite](./misc-satellite/README.md)
