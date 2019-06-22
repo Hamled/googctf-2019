@@ -7,7 +7,7 @@ class Driver
   include HTTParty
   base_uri 'drivetothetarget.web.ctfcompetition.com'
 
-  MAX_VELOCITY = 0.0008 / 7.3 # latitude minutes / seconds
+  MAX_VELOCITY = 0.0008 / 7.3 * 1.4 # degrees / seconds
 
   attr_accessor :lat, :lon, :token
   attr_accessor :dir, :status, :flag

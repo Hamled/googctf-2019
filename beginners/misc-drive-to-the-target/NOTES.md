@@ -16,3 +16,7 @@ Important things:
 Because I've been using Ruby more recently than Python, and because I happen to like HTTParty, I'm going to use it for coding this challenge.
 
 I spent a while building the script, and then ran it for quite a long time. And then lost internet connection at my coffee shop. So then I added the feature that I really should have added at first, which persists the various requests I've made into a file, and allows me to restart from that file by initializing parameters from the most recent request.
+
+After disconnecting again (I'm thinking maybe the ISP is killing the coffee shop's connection due to the high number of requests... or it's just bad luck), I setup a server on GCP and started my script running on there in tmux. If I disconnect again it should be all good.
+
+I've also added a 1.4x multiplier to the velocity which seems to be around the max I can do without getting speed limit errors. Hopefully this will eventually work...
