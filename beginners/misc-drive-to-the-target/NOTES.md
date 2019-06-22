@@ -26,3 +26,8 @@ Finally got to the point where my script was turning around because it overshot.
 Man, I really hope I'm not going to end up just circling this thing. My best shot, without rewriting this code to do a sort of direction-finding algorithm, is that I can just home in on the target in a spiral shape, by manually changing directions every so often. So far I've changed from sw originally, to nw, and now ne.
 
 Okay I've gotten to a point where basically any direction a single move is too much, time to slow down for the final approach...
+
+After slowing down a few times, I was able to get close enough to just manually fiddle with the final few movements (0.0001 degree increments) and found the flag at 51.4921, -0.1929:
+```
+CTF{Who_is_Tardis_Ormandy}
+```
