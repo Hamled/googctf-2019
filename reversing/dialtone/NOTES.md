@@ -15,3 +15,12 @@ Ghidra helped a lot because it's easy enough to start defining structures and re
     1. Do ??? with the buffer
     1. Check the results, print failure and exit(1)
 1. Print success and exit(0)
+
+The ??? above seems like its doing:
+1. First, reverse the input audio buffer into a new buffer:
+  1. Loop through audio buffer, one float per loop
+  1. Take the index for the loop, modify it by reversing the lower 12(13?) bits
+  1. Scale the float for this iteration into a double
+  1. Place that double into a new buffer (4x size of original) at modified index * 4
+  1. Place a 0.0 double in the location one past where we placed the double in previous step
+1. Then, *a whole bunch of crap*
