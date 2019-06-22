@@ -16,3 +16,10 @@ The flag is:
 ```
 CTF{4ll_D474_5h4ll_B3_Fr33}
 ```
+
+Later after talking to some people on the John Hammond discord, I got a hint about using `env` to run the `busybox` program, which I hadn't even bothered to try originally. It turns out `busybox` would give me a shell, or something equivalent to it, but it's magically disabled. Except if you run it through `env`.
+
+With that knowledge I was able to set the read permissions on `ORME.flag` and print out the second flag from this challenge:
+```
+CTF{Th3r3_1s_4lw4y5_4N07h3r_W4y}
+```
