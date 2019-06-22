@@ -15,7 +15,7 @@ class Driver
 
   #attr_accessor :last_move_time
 
-  def initialize(freq, last_url, dir)
+  def initialize(freq, last_url, dir, speed)
     self.lat = nil
     self.lon = nil
     self.token = nil
@@ -25,7 +25,7 @@ class Driver
     self.flag = nil
 
     @freq = freq
-    @move_delta = freq * MAX_VELOCITY * 0.7071 # per leg of triangle
+    @move_delta = freq * MAX_VELOCITY * 0.7071 * speed # per leg of triangle
 
     if last_url
       init_params_from_url(last_url)
@@ -186,15 +186,16 @@ class Driver
 end
 
 def main
-  freq = ARGV[0]&.to_f || 1.0
-  file = ARGV[1] if ARGV.length > 1
-  dir =  ARGV[2] if ARGV.length > 2
+  freq  = ARGV[0]&.to_f || 1.0
+  file  = ARGV[1] if ARGV.length > 1
+  dir   = ARGV[2] if ARGV.length > 2
+  speed = ARGV[3] if ARGV.length > 3
 
   if file
     last_url = `tail -n 1 #{file}`
   end
 
-  driver = Driver.new(freq, last_url, dir)
+  driver = Driver.new(freq, last_url, dir, speed.to_f)
   driver.drive
 end
 

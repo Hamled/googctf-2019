@@ -24,3 +24,5 @@ I've also added a 1.4x multiplier to the velocity which seems to be around the m
 Finally got to the point where my script was turning around because it overshot. I've updated the script to allow me to set a direction (se/sw/ne/nw). Hopefully I can manually drive it around a bit until we hone in on the specific location.
 
 Man, I really hope I'm not going to end up just circling this thing. My best shot, without rewriting this code to do a sort of direction-finding algorithm, is that I can just home in on the target in a spiral shape, by manually changing directions every so often. So far I've changed from sw originally, to nw, and now ne.
+
+Okay I've gotten to a point where basically any direction a single move is too much, time to slow down for the final approach...
