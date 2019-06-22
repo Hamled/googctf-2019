@@ -15,12 +15,12 @@ class Driver
 
   #attr_accessor :last_move_time
 
-  def initialize(freq, last_url)
+  def initialize(freq, last_url, dir)
     self.lat = nil
     self.lon = nil
     self.token = nil
 
-    self.dir = :sw
+    self.dir = dir.to_sym || :sw
     self.status = :farther
     self.flag = nil
 
@@ -83,9 +83,15 @@ class Driver
     when :sw
       self.lat -= move_delta
       self.lon -= move_delta
+    when :se
+      self.lat -= move_delta
+      self.lon += move_delta
     when :ne
       self.lat += move_delta
       self.lon += move_delta
+    when :nw
+      self.lat += move_delta
+      self.lon -= move_delta
     end
 
     #puts "(#{lat}, #{lon})..."
@@ -97,8 +103,12 @@ class Driver
     case dir
     when :sw
       self.dir = :ne
+    when :se
+      self.dir = :nw
     when :ne
       self.dir = :sw
+    when :nw
+      self.dir = :se
     end
   end
 
@@ -178,12 +188,13 @@ end
 def main
   freq = ARGV[0]&.to_f || 1.0
   file = ARGV[1] if ARGV.length > 1
+  dir =  ARGV[2] if ARGV.length > 2
 
   if file
     last_url = `tail -n 1 #{file}`
   end
 
-  driver = Driver.new(freq, last_url)
+  driver = Driver.new(freq, last_url, dir)
   driver.drive
 end
 

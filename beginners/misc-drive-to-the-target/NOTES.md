@@ -20,3 +20,5 @@ I spent a while building the script, and then ran it for quite a long time. And 
 After disconnecting again (I'm thinking maybe the ISP is killing the coffee shop's connection due to the high number of requests... or it's just bad luck), I setup a server on GCP and started my script running on there in tmux. If I disconnect again it should be all good.
 
 I've also added a 1.4x multiplier to the velocity which seems to be around the max I can do without getting speed limit errors. Hopefully this will eventually work...
+
+Finally got to the point where my script was turning around because it overshot. I've updated the script to allow me to set a direction (se/sw/ne/nw). Hopefully I can manually drive it around a bit until we hone in on the specific location.
