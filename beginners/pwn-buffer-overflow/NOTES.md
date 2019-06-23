@@ -35,3 +35,19 @@ Actually, it looks like I might be able to just jump onto the stack and execute 
 When trying to get my exploit working to run locally under QEMU, I found out that I was actually never controlling the return address as I thought I had been. It looks like instead I was triggering the crash handler, called `write_out` which prints the `flag0` file instead of `flag1`. This means it should be sufficient to return into the `local_flag` function, without modifying anything on in the data segment or writing shellcode to execute on the stack.
 
 However, I still don't have a clear sense of what exploit input I need to craft. Time to get GDB to work with my QEMU for MIPS.
+
+Well... that took a long time. I'm glad I didn't give up, though. All my attempts to do actual debugging on the program through QEMU were for naught (despite a significant investment of time just building the static QEMU binaries and gdb-multiarch). I'll need to keep working on how to get that setup properly -- it seems like a known issue with radare2 not being able to rebase its analysis data, and QEMU loading the MIPS binary at a different location on each run due to ASLR. Of course, perhaps I'm just debugging QEMU itself? Even using QEMU's GDB stub and connecting remotely didn't work, though.
+
+Anyways, I fell back to good ol' `strace` (specifically `qemu-mipsel -strace bof`) and it was able to print the `$ip` address when the seg fault was triggered, which allowed me to locate the correct portion of my exploit string to place the new return target.
+
+However, my earlier thought that I could simply return to the `flag_local` function was incorrect, as that caused a seg fault later on in some other part of the code (or maybe I was jumping to the wrong place and didn't realize??). In a fit of desperation, I decided to jump to the exact instruction that started the process of putting the "flag1" string address in a register and calling `print_file`. It turns out this worked. It still crashed, of course, but not before printing out the second flag:
+```
+CTF{controlled_crash_causes_conditional_correspondence}
+```
+
+The final command to trigger this was:
+```
+printf "run\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x60\x08\x40\x00\n" | netcat buffer-overflow.ctfcompetition.com 1337
+```
+
+So it turns out I did have the correct location to put the address, but my jump/return target was not good for other reasons.
