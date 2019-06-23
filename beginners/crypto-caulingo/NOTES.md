@@ -30,3 +30,12 @@ So after writing out the code, taking a break for lunch and helping various peop
 
 Looks like I'm back to square one. I need to manually convert the e and n values into a binary format that is acceptable to one of the cryptosystems like OpenSSL. Previously I've only converted between existing key formats, not had to generate one from scratch with the un-encoded values...
 
+Further examination of the crypto collection code shows that when the datum provided to `datum->pk-key` is `'rkt-public` it tries to decode the final parameter as a bye-string which is in the format specified by ASN.1 SubjectPublicKeyInfo (it does this using OpenSSL's `d2i_PUBKEY` function). Looks like that's the structure I need to learn about. 
+
+After a bit more testing, I think I've figured out that actually I was on the correct path before and I was just missing some obvious stuff because I hadn't followed the introductory text in the crypto collection's documentation.
+
+I was going to generate a private key the normal way, pull out the public key bit, and then use the asn1 collection's methods to decode it and see what structure it had, then duplicate that and encode it using the same library. However, in doing so I noticed that the datum form of the public key I got from the generated private key.... was exactly the shape I expected.
+
+Turns out I just needed to directly require the libcrypto system and setup its factory in the list of crypto-factories. My next challenge is that the `pk-decrypt` function is defined to require a private key, even though it should be possible to use it with a public key. Thankfully, I can just substitute the code it uses, since the issue is a contract violation.
+
+...Okay that caused a segfault. Perhaps the OpenSSL functions `pk-decrypt` is connected to is actually private key specific... I'm *so* sure you can decrypt with a public key... like the public/private distinction is purely in how they should be treated by people, not in the math. In fact, signing and verifying should work by encrypting w/ private and decrypting w/ public...
