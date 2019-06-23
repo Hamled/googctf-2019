@@ -24,4 +24,9 @@ I tried going through the decryption algorithm once for the first byte (0x50) fr
 
 I also confirmed this in Racket in case somehow I had not used Python properly, but I got the same result. My new plan is to do the decryption proces for the entire msg value, treated as a single integer, and then see if the result can be understood as the bytes of the plaintext...
 
-Okay that may have worked, but it's hard to tell because I can't easily turn the resulting huge integer into a sequence of bytes. Instead, I'm going to try Racket's crypto library, which has a simple function `datum->pk-key` for converting a list `(list 'rsa 'public n e)` into a public key structure to pass into other parts of the public key crypto library to decrypt a byte string.
+Okay that may have worked, but it's hard to tell because I can't easily turn the resulting huge integer into a sequence of bytes. Instead, I'm going to try Racket's crypto collection, which has a simple function `datum->pk-key` for converting a list `(list 'rsa 'public n e)` into a public key structure to pass into other parts of the public key crypto collection to decrypt a byte string.
+
+So after writing out the code, taking a break for lunch and helping various people with earlier beginner challenges, I'm back to working on this. It turns out the `datum->pk-key` function does not want a list with `n` and `e` parameters, but instead a byte-string with the raw key info. In all the examples this is something resulting from generating a private key or public key in one of the supported cryptosystems.
+
+Looks like I'm back to square one. I need to manually convert the e and n values into a binary format that is acceptable to one of the cryptosystems like OpenSSL. Previously I've only converted between existing key formats, not had to generate one from scratch with the un-encoded values...
+
