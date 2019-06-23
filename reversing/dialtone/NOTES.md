@@ -24,3 +24,11 @@ The ??? above seems like its doing:
   1. Place that double into a new buffer (4x size of original) at modified index * 4
   1. Place a 0.0 double in the location one past where we placed the double in previous step
 1. Then, *a whole bunch of crap*
+
+... a long time passes ...
+
+I've been continuing to investigate the decompilation results in Ghidra, slowly reversing the functions mentioned above. I decided to start building my own C code version of everything I found, hopefully as a better reference when looking at the to-be-determined bits.
+
+To build: `gcc -o dialtone -lm -lpulse -lpulse-simple dialtone.c` (need libpulse libraries installed)
+
+Because it's not finishd, the while loop checking for success never finishes.
