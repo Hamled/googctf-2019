@@ -39,3 +39,5 @@ I was going to generate a private key the normal way, pull out the public key bi
 Turns out I just needed to directly require the libcrypto system and setup its factory in the list of crypto-factories. My next challenge is that the `pk-decrypt` function is defined to require a private key, even though it should be possible to use it with a public key. Thankfully, I can just substitute the code it uses, since the issue is a contract violation.
 
 ...Okay that caused a segfault. Perhaps the OpenSSL functions `pk-decrypt` is connected to is actually private key specific... I'm *so* sure you can decrypt with a public key... like the public/private distinction is purely in how they should be treated by people, not in the math. In fact, signing and verifying should work by encrypting w/ private and decrypting w/ public...
+
+Okay fuck it. I spent over an hour just trying to get some additional FFI calls to OpenSSL to work so I could use Racket to do the actual decryption. No luck, and I don't want to waste more time debugging it. So I used the crypto library to output the public key in DER form and then use the `openssl` command to convert it to PEM.
