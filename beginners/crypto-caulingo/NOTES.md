@@ -68,4 +68,8 @@ So, I guess that option is out. I ended up timing the Python and C implementatio
 
 Alright so the C version has been calculating away for nearly an hour and I'm starting to think I'll need a better solution. Time to practice my multithreading skills. Honestly, based on the algorithm this should fall into the category of "embarassingly parallel" problems. Each check for a valid `a` value can be done independently, and it's a simple process of incrementing `a` on each loop, so we can just split that up by changing the step number and starting each thread off on its own offset.
 
-The real difficulty is re-leaning pthreads.
+The real difficulty is re-leaning pthreads. Of course, I'm going to leave my original version running in the background while I do this, because I didn't bother to code in a way to persist the progress, and hey maybe it'll finish soon. I also didn't code in any progress meter.
+
+I added some code to indicate how quickly the C program was calculating new possible factors, and even at one point an attempt to estimate the total time remaining. That bit was pointless because the idea with using Fermat's method here is that it doesn't take nearly as long as the total time it *could* take, because the prime factors are very close to each other (and thus close to the starting point, sqrt(n)).
+
+Even still, the fact that I was only calculating 35 million factor combinations per second (single-threaded) and it had gone for multiple hours started to make me worry that either I was going down the wrong path with factoring at all, or I needed to come up with a much better strategy for doing it.
