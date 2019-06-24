@@ -13,3 +13,4 @@ These are my files for the beginners challenges. The `NOTES.md` files include so
 * [cwo-xss](./web-cwo-xss/README.md)
 * [caulingo](./crypto-caulingo/README.md)
 * [buffer-overflow](./pwn-buffer-overflow/README.md)
+* [gatelock](./hardware-gatelock/README.md)
