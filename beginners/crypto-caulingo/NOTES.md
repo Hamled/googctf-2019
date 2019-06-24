@@ -52,4 +52,16 @@ So after talking wih some friends and puzzling over the math in section 3 of the
 * The two primes are going to be close-ish to sqrt(n)
 * Their two lengths in decimal digits are going to be 6 apart of less.
 
-I spent some time looking for such primes (sqrt(n) is 309 digits) online, but only found a few and none were correct. I think I need to just do my own searching for them. I've downloaded the primesieve application to help with that.
+I spent some time looking for such primes (sqrt(n) is 309 digits** online, but only found a few and none were correct. I think I need to just do my own searching for them. I've downloaded the primesieve application to help with that.
+
+Okay, so primesieve only works to search for primes < 2**64, too bad. I ended up getting a hint from Gynvael Coldwind (a true inspiration) in the John Hammond Discord channel, he mentioned "Fermat's factorization method". Turns out that's a useful speedup to normal integer factorization methods that applies when the two factors are rather close to each other (less than sqrt(n) apart) -- exactly our case.
+
+Some more searching online and I found this incredibly helpful page: https://wiremask.eu/articles/fermats-prime-numbers-factorization/ which talks about using Fermat's method to factor RSA keys. It even specifically mentions this being used in certain CTF challenges, heh.
+
+Long story short, I spent a very small amount of time transcribing the Python code into Racket since I wanted more practice with it. That went well, and I do like the Racket code... but when I ran it on their example RSA modulus number, it took about two minutes. I was worried it might end up being unacceptably slow because the number in this challenge is twice as many digits.
+
+Being the software developer that I am, I noticed that their Python code was using gmpy2 to hopefully speed up the math calculations while maintaining arbitrary precision. I decided to try a version of my Racket coding using their GMP wrapper collection. I also built the C code that they provided for good measure.
+
+It turns out somehow my Racket w/ GMP code is about slower 30% than the pure Racket code, for their example RSA value. Additionally, when I tried a worst-case value (2345678917, which is prime) from Wikipedia it took more than 10 minutes and then Racket segfaulted.
+
+So, I guess that option is out. I ended up timing the Python and C implementations provided from the website as well, and the C version was anywhere from 7.5 - 10 times faster for my small set of test cases. I chose to go with the C version for calculating the actual factors with the challenge's 2048-bit RSA public key modulus.
