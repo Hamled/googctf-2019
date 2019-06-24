@@ -83,3 +83,15 @@ I wrote up a C program using GMP to do the suggested calculation (guess `p = sqr
 p = 151086174643947302290817794140091756798645765602409645643205831091644137498519425104335688550286307690830177161800083588667379385673705979813357923016141205953591742544325170678167010991535747769057335224460619777264606691069942245683132083955765987513089646708001710658474178826337742596489996782669571549253
 q = 115502906812186413716028212900548735990904256575141882752425616464266991765240920703188618324966988373216520827723741484031611192826120314542453727041306942082909556327966471790487878679927202639569020757238786152140574636623998668929044300958627146625246115304479897191050159379832505990011874114710868929959
 ```
+
+Now I need to compute the `d` from these two, and use that with Racket's crypto collection to generate a private key DER. Turns out I also needed to compute a few other components (`dp`, `dq`, and `qInv`) for the crypto collection functions to generate an RSA private key for me.
+
+Once that was done I was able to have my Racket program output the private key in DER form (it doesn't seem to support raw mode [no padding] for decrypting, or at least I coudn't figure out how to do it). Then I used the following command with OpenSSL's commandline tool to decrypt the message (stored in binary format in `msg.enc`):
+```
+openssl rsautl -decrypt -inkey privkey.der -keyform DER -raw -in msg.enc
+```
+
+This yielded the message along with the flag:
+```
+CTF{017d72f0b513e89830bccf5a36306ad944085a47}
+```

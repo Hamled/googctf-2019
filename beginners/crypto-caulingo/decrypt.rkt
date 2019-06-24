@@ -1,51 +1,45 @@
 #lang racket
 
-(require crypto crypto/libcrypto asn1)
-(require crypto/private/libcrypto/ffi
-         (only-in crypto/private/common/common
-                  shrink-bytes))
+(require crypto crypto/libcrypto math)
 (require (only-in file/sha1
                   hex-string->bytes))
 
-(crypto-factories libcrypto-factory)
+(define rsa-factory libcrypto-factory)
 
 (define (read-values path)
   (let* ([lines (file->lines path)]
 
          [n-line (list-ref lines 1)]
          [e-line (list-ref lines 4)]
-         [m-line (list-ref lines 7)]
+         [p-line (list-ref lines 7)]
+         [q-line (list-ref lines 10)]
+         [m-line (list-ref lines 13)]
 
          [n (string->number n-line 10)]
          [e (string->number e-line 10)]
+         [p (string->number p-line 10)]
+         [q (string->number q-line 10)]
          [m (hex-string->bytes m-line)])
-    (cons (cons n e) m)))
+    (values (list n e p q) m)))
 
-(define (rsa-params->pub-key params)
-  (datum->pk-key (list 'rsa 'public (car params) (cdr params))
-                 'rkt-public))
-
-(define (libcrypto-pub-key-decrypt evp buf pad)
-  (define ctx (EVP_PKEY_CTX_new evp))
-  (EVP_PKEY_decrypt_init ctx)
-  (define outlen (EVP_PKEY_decrypt ctx #f 0 buf (bytes-length buf)))
-  (define outbuf (make-bytes outlen))
-  (define outlen2 (EVP_PKEY_decrypt ctx outbuf outlen buf (bytes-length buf)))
-  (EVP_PKEY_CTX_free ctx)
-  (shrink-bytes outbuf outlen2))
-
-(define (rsa-pub-key-decrypt pk buf #:pad [pad #f])
-  (let ([evp (get-field evp pk)])
-    (libcrypto-pub-key-decrypt evp buf pad)))
+(define (rsa-params->pk-key key-params)
+  (let*-values ([(n e p q) (apply values key-params)]
+                [(ctot) (lcm (sub1 p) (sub1 q))]
+                [(d) (modular-inverse e ctot)]
+                [(dp) (modular-inverse e (sub1 p))]
+                [(dq) (modular-inverse e (sub1 q))]
+                [(qInv) (modular-inverse q p)])
+    (datum->pk-key (list 'rsa 'private 0 n e d p q dp dq qInv)
+                   'rkt-private rsa-factory)))
 
 (define (main)
-  (let* ([values (read-values "msg.txt")]
-         [key-params (car values)]
-         [msg (cdr values)]
+  (crypto-factories rsa-factory)
+  (let*-values ([(key-params msg) (read-values "msg.txt")]
 
-         [pub-key (rsa-params->pub-key key-params)]
-         [der-data (pk-key->datum pub-key 'SubjectPublicKeyInfo)]
-         #;[plaintext (rsa-pub-key-decrypt pub-key msg)])
-    (displayln der-data)))
+                [(key) (rsa-params->pk-key key-params)]
+                [(key-der) (pk-key->datum key 'RSAPrivateKey)]
+                #;[(plaintext) (pk-decrypt key msg)])
+    ;#(displayln (bytes->string/utf-8 plaintext))
+    (display key-der)))
 
 (main)
