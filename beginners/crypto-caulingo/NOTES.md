@@ -65,3 +65,7 @@ Being the software developer that I am, I noticed that their Python code was usi
 It turns out somehow my Racket w/ GMP code is about slower 30% than the pure Racket code, for their example RSA value. Additionally, when I tried a worst-case value (2345678917, which is prime) from Wikipedia it took more than 10 minutes and then Racket segfaulted.
 
 So, I guess that option is out. I ended up timing the Python and C implementations provided from the website as well, and the C version was anywhere from 7.5 - 10 times faster for my small set of test cases. I chose to go with the C version for calculating the actual factors with the challenge's 2048-bit RSA public key modulus.
+
+Alright so the C version has been calculating away for nearly an hour and I'm starting to think I'll need a better solution. Time to practice my multithreading skills. Honestly, based on the algorithm this should fall into the category of "embarassingly parallel" problems. Each check for a valid `a` value can be done independently, and it's a simple process of incrementing `a` on each loop, so we can just split that up by changing the step number and starting each thread off on its own offset.
+
+The real difficulty is re-leaning pthreads.
