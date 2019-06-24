@@ -45,3 +45,11 @@ Okay fuck it. I spent over an hour just trying to get some additional FFI calls 
 So it was very easy to get the public key as a PEM file, but that doesn't help me one bit because there's no software out there designed to attempt decryption with a standard public key file. Everything is written specifically for decrypting with a private key file. It still seems like this should be doable, but I'm starting to think that maybe I'm just going down the wrong track.
 
 Someone mentioned that maybe the key is actually weak and you can factor it somehow, and we can get the private key from that. I really hope that's not what I have to do because that sounds like it would be slow. I'm going to take one last stab at getting something to to attempt decryption using only the public key data, and if that doesn't go I'll switch over to factoring. I'm going to look for a pure Python implementation of RSA because I might be able to fudge it to take the public key components and use n instead of d when decrypting.
+
+Okay, I finally decided to look at the PDF file. Of course that's where the clear hint to just do factoring was. Curse my over-eager racing towards a solution....
+
+So after talking wih some friends and puzzling over the math in section 3 of the PDF I was led to two conclusions (largely by the two friends helping, I'm pretty bad at math):
+* The two primes are going to be close-ish to sqrt(n)
+* Their two lengths in decimal digits are going to be 6 apart of less.
+
+I spent some time looking for such primes (sqrt(n) is 309 digits) online, but only found a few and none were correct. I think I need to just do my own searching for them. I've downloaded the primesieve application to help with that.
