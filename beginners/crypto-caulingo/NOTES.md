@@ -73,3 +73,13 @@ The real difficulty is re-leaning pthreads. Of course, I'm going to leave my ori
 I added some code to indicate how quickly the C program was calculating new possible factors, and even at one point an attempt to estimate the total time remaining. That bit was pointless because the idea with using Fermat's method here is that it doesn't take nearly as long as the total time it *could* take, because the prime factors are very close to each other (and thus close to the starting point, sqrt(n)).
 
 Even still, the fact that I was only calculating 35 million factor combinations per second (single-threaded) and it had gone for multiple hours started to make me worry that either I was going down the wrong path with factoring at all, or I needed to come up with a much better strategy for doing it.
+
+Another friend noticed my conversation about working on this challenge and took a look at the details in the PDF. They quickly came to the conclusion that it might actually be a significantly smaller range of possible factorizations than the general-purpose Fermat method, if you go by the relationship specified in the PDF file.
+
+... some time passes ...
+
+I wrote up a C program using GMP to do the suggested calculation (guess `p = sqrt(n * b / a)` for each (a,b) where 1 <= a,b <= 1000, then iterate a range +/- 10000 based on that p and try each one). After a few iterations to improve the progress printing output, and to optimize the search space a bit based on suggestions from the same friends, I was able to factor n:
+```
+p = 151086174643947302290817794140091756798645765602409645643205831091644137498519425104335688550286307690830177161800083588667379385673705979813357923016141205953591742544325170678167010991535747769057335224460619777264606691069942245683132083955765987513089646708001710658474178826337742596489996782669571549253
+q = 115502906812186413716028212900548735990904256575141882752425616464266991765240920703188618324966988373216520827723741484031611192826120314542453727041306942082909556327966471790487878679927202639569020757238786152140574636623998668929044300958627146625246115304479897191050159379832505990011874114710868929959
+```
