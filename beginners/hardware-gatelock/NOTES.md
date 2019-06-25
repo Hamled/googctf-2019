@@ -47,3 +47,20 @@ With the Mesecons mod installed and enabled for the "beginner" world, I was able
 There appear to be some blocks which function as standard logic gates (and, or, not) and the rest are the circuits. Some circuit blocks are bright blue indicating that they're currently on, and others are darkened because they're off. Finally, at the far edge of the map, all of the circuits ultimately stem from a set of 20 switches, which will be the bits I need to figure out for unlocking the gate. There's one final switch connecting to the last logic gate before the circuit goes to the gate lock, presumably once I've figured out the key that switch represents the open/close action.
 
 It has become dark (in the game, and in real life) so I will wait before taking screenshots of the overall circuit layout and specific sections (viewed far enough away to see the whole circuit, the logic gates cannot be distinguished).
+
+After taking some screenshots I had dinner and thought about my plan for cracking the key. Rather than trying to work out what the circuit does by hand, I'm going to take advantage of one of the most beautiful things about computer science or programming -- any logic can be expressed in any language. I will transcribe the circuit as a series of boolean operations in Racket and then write a loop that tries every input bit sequence (2**20 = 1,048,576 combinations) until one of them outputs `#t` which represents an on signal from the final line leading to the gate.
+
+Small setback... my circuit overview screenshot didn't have enough details to show how each switch input reached the first set of logic gates. So I went back in-game to get better screenshots. And then I hit the mouse button on my laptop keyboard instead of spacebar (to fly upwards) and ended up mining/destroying a chunk of circuit. So I get to copy the world over again, yay.
+
+Alright, everything got transcribed into a Racket program. It was fairly tedious, both in building the "switches to inputs" map (because several switches were part of the input to multiple logic gates), and in building the complete logic circuit using boolean operators.
+
+Once I got everything transcribed though, the program was very simple and worked beautifully. In fact, it only took 1.3 seconds to calculate the correct key: `'(#t #f #f #f #f #f #t #f #f #t #t #t #f #t #f #f #f #f #t #f)`. I verified the cracked key in-game by flipping each of the switches on when the sequence had a `#t` value (my scheme was basically reversed with the first boolean representing the right-most switch).
+
+Now it's a simple matter of turning that into a binary sequence. Of which there are two options because of endianness:
+* 10000010011101000010
+* 01000010111001000001
+
+I tried both and in the end the flag was:
+```
+CTF{01000010111001000001}
+```
